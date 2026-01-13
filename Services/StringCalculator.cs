@@ -28,11 +28,26 @@ public class StringCalculator : ICalculator
             var parts = numbers.Split('\n', 2);
             if (parts.Length == 2)
             {
-                var customDelimiter = parts[0].Substring(2);
-                if (!string.IsNullOrEmpty(customDelimiter))
+                var delimiterSpec = parts[0].Substring(2);
+                
+                if (delimiterSpec.StartsWith("[") && delimiterSpec.EndsWith("]"))
                 {
-                    delimiters.Add(customDelimiter);
+                    // Case for delimiters of any length: //[delimiter]\n
+                    var customDelimiter = delimiterSpec.Substring(1, delimiterSpec.Length - 2);
+                    if (!string.IsNullOrEmpty(customDelimiter))
+                    {
+                        delimiters.Add(customDelimiter);
+                    }
                 }
+                else
+                {
+                    // Case for single character delimiters: //{delimiter}\n
+                    if (!string.IsNullOrEmpty(delimiterSpec))
+                    {
+                        delimiters.Add(delimiterSpec);
+                    }
+                }
+                
                 numbersToProcess = parts[1];
             }
         }

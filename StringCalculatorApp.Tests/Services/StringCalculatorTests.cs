@@ -94,6 +94,13 @@ public class StringCalculatorTests
     }
 
     [Fact]
+    public void Add_CustomMultiCharacterDelimiter_ReturnsSum()
+    {
+        var result = _calculator.Add("//[***]\n11***22***33");
+        Assert.Equal(66, result);
+    }
+
+    [Fact]
     public void Add_CustomCommaDelimiterWithInvalidValues_ReturnsSumOfValidValues()
     {
         var result = _calculator.Add("//,\n2,ff,100");
