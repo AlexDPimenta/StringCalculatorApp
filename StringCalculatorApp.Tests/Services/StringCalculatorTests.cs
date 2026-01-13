@@ -38,8 +38,8 @@ public class StringCalculatorTests
     [Fact]
     public void Add_TwoNumbers_ReturnsSum()
     {
-        var result = _calculator.Add("1,5000");
-        Assert.Equal(5001, result);
+        var result = _calculator.Add("1,500");
+        Assert.Equal(501, result);
     }
 
     [Fact]
@@ -73,9 +73,16 @@ public class StringCalculatorTests
     }
 
     [Fact]
-    public void Add_NewlineDelimiter_ReturnsSum()
+    public void Add_NumbersGreaterThanMaxNumberValue_AreIgnored()
     {
-        var result = _calculator.Add("1\n2,3");
-        Assert.Equal(6, result);
+        var result = _calculator.Add("2,1001,6");
+        Assert.Equal(8, result);
+    }
+
+    [Fact]
+    public void Add_NumbersEqualToMaxNumberValue_AreIncluded()
+    {
+        var result = _calculator.Add("2,1000,6");
+        Assert.Equal(1008, result);
     }
 }

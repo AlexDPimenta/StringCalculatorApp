@@ -20,7 +20,8 @@ public class StringCalculator : ICalculator
             return 0;
         }
 
-        var splitNumbers = numbers.Split(',', '\n');
+        var splitNumbers = numbers.Split(_settings.Delimiters ?? new[] { ",", "\n" }, StringSplitOptions.None);
+
         var parsedNumbers = splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
             .ToList();
@@ -31,6 +32,8 @@ public class StringCalculator : ICalculator
             throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negatives)}");
         }
 
-        return parsedNumbers.Sum();
+        return parsedNumbers
+            .Where(n => n <= _settings.MaxNumberValue)
+            .Sum();
     }
 }
