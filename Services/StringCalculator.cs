@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using StringCalculatorApp.Interfaces;
 using StringCalculatorApp.Models;
@@ -32,11 +33,15 @@ public class StringCalculator : ICalculator
                 
                 if (delimiterSpec.StartsWith("[") && delimiterSpec.EndsWith("]"))
                 {
-                    // Case for delimiters of any length: //[delimiter]\n
-                    var customDelimiter = delimiterSpec.Substring(1, delimiterSpec.Length - 2);
-                    if (!string.IsNullOrEmpty(customDelimiter))
+                    // Case for multiple delimiters or single multi-char delimiter: //[{del1}][{del2}]\n
+                    var matches = Regex.Matches(delimiterSpec, @"\[(.*?)\]");
+                    foreach (Match match in matches)
                     {
-                        delimiters.Add(customDelimiter);
+                        var customDelimiter = match.Groups[1].Value;
+                        if (!string.IsNullOrEmpty(customDelimiter))
+                        {
+                            delimiters.Add(customDelimiter);
+                        }
                     }
                 }
                 else
