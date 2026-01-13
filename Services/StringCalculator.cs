@@ -26,7 +26,8 @@ public class StringCalculator : ICalculator
 
         var parsedNumbers = ParseNumbers(numbers);
 
-        ValidateNoNegatives(parsedNumbers);
+        if(Settings.DenyNegatives)
+            ValidateNoNegatives(parsedNumbers);
 
         var filteredNumbers = parsedNumbers
             .Where(n => n <= Settings.MaxNumberValue)
