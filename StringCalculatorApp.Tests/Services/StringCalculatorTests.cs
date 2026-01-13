@@ -85,4 +85,18 @@ public class StringCalculatorTests
         var result = _calculator.Add("2,1000,6");
         Assert.Equal(1008, result);
     }
+
+    [Fact]
+    public void Add_CustomSingleCharacterDelimiter_ReturnsSum()
+    {
+        var result = _calculator.Add("//#\n2#5");
+        Assert.Equal(7, result);
+    }
+
+    [Fact]
+    public void Add_CustomCommaDelimiterWithInvalidValues_ReturnsSumOfValidValues()
+    {
+        var result = _calculator.Add("//,\n2,ff,100");
+        Assert.Equal(102, result);
+    }
 }

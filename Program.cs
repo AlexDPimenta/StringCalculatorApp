@@ -20,6 +20,11 @@ while (true)
     Console.Write("> ");
     var input = Console.ReadLine();
 
+    if (input != null)
+    {
+        input = input.Replace("\\n", "\n");
+    }
+
     try
     {
         var result = calculator.Add(input ?? "");

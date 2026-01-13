@@ -20,7 +20,24 @@ public class StringCalculator : ICalculator
             return 0;
         }
 
-        var splitNumbers = numbers.Split(_settings.Delimiters ?? new[] { ",", "\n" }, StringSplitOptions.None);
+        var delimiters = new List<string>(_settings.Delimiters ?? new[] { ",", "\n" });
+        var numbersToProcess = numbers;
+
+        if (numbers.StartsWith("//"))
+        {
+            var parts = numbers.Split('\n', 2);
+            if (parts.Length == 2)
+            {
+                var customDelimiter = parts[0].Substring(2);
+                if (!string.IsNullOrEmpty(customDelimiter))
+                {
+                    delimiters.Add(customDelimiter);
+                }
+                numbersToProcess = parts[1];
+            }
+        }
+
+        var splitNumbers = numbersToProcess.Split(delimiters.ToArray(), StringSplitOptions.None);
 
         var parsedNumbers = splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
