@@ -21,19 +21,39 @@ public class StringCalculator : ICalculator
             return 0;
         }
 
-        var delimiters = new List<string>(_settings.Delimiters ?? new[] { ",", "\n" });
-        var numbersToProcess = numbers;
+        var parsedNumbers = ParseNumbers(numbers);
 
-        if (numbers.StartsWith("//"))
+        ValidateNoNegatives(parsedNumbers);
+
+        return parsedNumbers
+            .Where(n => n <= _settings.MaxNumberValue)
+            .Sum();
+    }
+
+    private List<int> ParseNumbers(string input)
+    {
+        var (delimiters, numbersToProcess) = ExtractDelimitersAndPayload(input);
+
+        return numbersToProcess
+            .Split(delimiters, StringSplitOptions.None)
+            .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
+            .ToList();
+    }
+
+    private (string[] delimiters, string payload) ExtractDelimitersAndPayload(string input)
+    {
+        var delimiters = new List<string>(_settings.Delimiters ?? new[] { ",", "\n" });
+        var payload = input;
+
+        if (input.StartsWith("//"))
         {
-            var parts = numbers.Split('\n', 2);
+            var parts = input.Split('\n', 2);
             if (parts.Length == 2)
             {
                 var delimiterSpec = parts[0].Substring(2);
                 
                 if (delimiterSpec.StartsWith("[") && delimiterSpec.EndsWith("]"))
                 {
-                    // Case for multiple delimiters or single multi-char delimiter: //[{del1}][{del2}]\n
                     var matches = Regex.Matches(delimiterSpec, @"\[(.*?)\]");
                     foreach (Match match in matches)
                     {
@@ -44,33 +64,24 @@ public class StringCalculator : ICalculator
                         }
                     }
                 }
-                else
+                else if (!string.IsNullOrEmpty(delimiterSpec))
                 {
-                    // Case for single character delimiters: //{delimiter}\n
-                    if (!string.IsNullOrEmpty(delimiterSpec))
-                    {
-                        delimiters.Add(delimiterSpec);
-                    }
+                    delimiters.Add(delimiterSpec);
                 }
                 
-                numbersToProcess = parts[1];
+                payload = parts[1];
             }
         }
 
-        var splitNumbers = numbersToProcess.Split(delimiters.ToArray(), StringSplitOptions.None);
+        return (delimiters.ToArray(), payload);
+    }
 
-        var parsedNumbers = splitNumbers
-            .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
-            .ToList();
-
-        var negatives = parsedNumbers.Where(n => n < 0).ToList();
+    private void ValidateNoNegatives(List<int> numbers)
+    {
+        var negatives = numbers.Where(n => n < 0).ToList();
         if (negatives.Any())
         {
             throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negatives)}");
         }
-
-        return parsedNumbers
-            .Where(n => n <= _settings.MaxNumberValue)
-            .Sum();
     }
 }
