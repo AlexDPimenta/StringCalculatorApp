@@ -9,13 +9,13 @@ namespace StringCalculatorApp.Tests.Services;
 public class StringCalculatorTests
 {
     private readonly StringCalculator _calculator;
-    private readonly Mock<IOptions<CalculatorSettings>> _mockSettings;
+    private readonly Mock<IOptionsMonitor<CalculatorSettings>> _mockSettingsMonitor;
 
     public StringCalculatorTests()
     {
-        _mockSettings = new Mock<IOptions<CalculatorSettings>>();
-        _mockSettings.Setup(s => s.Value).Returns(new CalculatorSettings());
-        _calculator = new StringCalculator(_mockSettings.Object);
+        _mockSettingsMonitor = new Mock<IOptionsMonitor<CalculatorSettings>>();
+        _mockSettingsMonitor.Setup(s => s.CurrentValue).Returns(new CalculatorSettings());
+        _calculator = new StringCalculator(_mockSettingsMonitor.Object);
     }
 
     [Theory]
@@ -112,5 +112,44 @@ public class StringCalculatorTests
     {
         var result = _calculator.Add("//,\n2,ff,100");
         Assert.Equal(102, result);
+    }
+
+    [Fact]
+    public void Add_SubtractionOperation_ReturnsCorrectResult()
+    {
+        // Arrange
+        var settings = new CalculatorSettings { Operation = '-', Delimiters = new[] { "," } };
+        _mockSettingsMonitor.Setup(s => s.CurrentValue).Returns(settings);
+        
+        // Act
+        var result = _calculator.Add("10,2,3");
+        
+        // Assert
+        Assert.Equal(5, result); // 10 - 2 - 3 = 5
+    }
+
+    [Fact]
+    public void Add_DivisionOperation_ReturnsCorrectResult()
+    {
+        // Arrange
+        var settings = new CalculatorSettings { Operation = '/', Delimiters = new[] { "," } };
+        _mockSettingsMonitor.Setup(s => s.CurrentValue).Returns(settings);
+        
+        // Act
+        var result = _calculator.Add("20,2,2");
+        
+        // Assert
+        Assert.Equal(5, result); // 20 / 2 / 2 = 5
+    }
+
+    [Fact]
+    public void Add_DivisionByZero_ThrowsException()
+    {
+        // Arrange
+        var settings = new CalculatorSettings { Operation = '/', Delimiters = new[] { "," } };
+        _mockSettingsMonitor.Setup(s => s.CurrentValue).Returns(settings);
+        
+        // Act & Assert
+        Assert.Throws<DivideByZeroException>(() => _calculator.Add("10,0"));
     }
 }
