@@ -43,10 +43,19 @@ public class StringCalculatorTests
     }
 
     [Fact]
-    public void Add_TwoNumbersWithNegative_ReturnsSum()
+    public void Add_TwoNumbersWithNegative_ThrowsArgumentException()
     {
-        var result = _calculator.Add("4,-3");
-        Assert.Equal(1, result);
+        Action action = () => _calculator.Add("4,-3");
+        var exception = Assert.Throws<ArgumentException>(action);
+        Assert.Contains("Negatives not allowed: -3", exception.Message);
+    }
+
+    [Fact]
+    public void Add_MultipleNegativeNumbers_ThrowsArgumentExceptionWithAllNegatives()
+    {
+        Action action = () => _calculator.Add("1,-2,3,-4");
+        var exception = Assert.Throws<ArgumentException>(action);
+        Assert.Contains("-2, -4", exception.Message);
     }
 
     [Fact]

@@ -21,9 +21,16 @@ public class StringCalculator : ICalculator
         }
 
         var splitNumbers = numbers.Split(',', '\n');
-
-        return splitNumbers
+        var parsedNumbers = splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
-            .Sum();
+            .ToList();
+
+        var negatives = parsedNumbers.Where(n => n < 0).ToList();
+        if (negatives.Any())
+        {
+            throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negatives)}");
+        }
+
+        return parsedNumbers.Sum();
     }
 }
