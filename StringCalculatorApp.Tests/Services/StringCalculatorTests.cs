@@ -57,10 +57,9 @@ public class StringCalculatorTests
     }
 
     [Fact]
-    public void Add_MoreThanTwoNumbers_ThrowsArgumentException()
+    public void Add_MultipleNumbers_ReturnsSum()
     {
-        Action action = () => _calculator.Add("1,2,3");
-        var exception = Assert.Throws<ArgumentException>(action);
-        Assert.Equal("A maximum of 2 numbers is allowed.", exception.Message);
+        var result = _calculator.Add("1,2,3,4,5,6,7,8,9,10,11,12");
+        Assert.Equal(78, result);
     }
 }
