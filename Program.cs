@@ -13,7 +13,7 @@ using IHost host = builder.Build();
 var calculator = host.Services.GetRequiredService<ICalculator>();
 
 Console.WriteLine("--- String Calculator Console ---");
-Console.WriteLine("Digite a string de números (ou pressione Ctrl+C para sair):");
+Console.WriteLine("Enter the string of numbers (or press Ctrl+C to exit):");
 
 while (true)
 {
@@ -23,15 +23,15 @@ while (true)
     try
     {
         var result = calculator.Add(input ?? "");
-        Console.WriteLine($"Resultado: {result}");
+        Console.WriteLine($"Result: {result}");
     }
     catch (ArgumentException ex)
     {
-        Console.WriteLine($"Erro de argumento: {ex.Message}");
+        Console.WriteLine($"Argument error: {ex.Message}");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Erro inesperado: {ex.Message}");
+        Console.WriteLine($"Unexpected error: {ex.Message}");
     }
 }
 

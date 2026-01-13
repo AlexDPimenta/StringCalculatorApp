@@ -22,11 +22,6 @@ public class StringCalculator : ICalculator
 
         var splitNumbers = numbers.Split(',');
 
-        if (splitNumbers.Length > 2)
-        {
-            throw new ArgumentException("A maximum of 2 numbers is allowed.");
-        }
-
         return splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
             .Sum();
