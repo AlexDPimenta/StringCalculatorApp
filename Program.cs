@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StringCalculatorApp.Extensions;
 using StringCalculatorApp.Interfaces;
+using StringCalculatorApp.Models;
 
 var builder = Host.CreateApplicationBuilder(args);
 
@@ -27,8 +29,7 @@ while (true)
 
     try
     {
-        var result = calculator.Add(input ?? "");
-        Console.WriteLine($"Result: {result}");
+        calculator.Add(input ?? "");
     }
     catch (ArgumentException ex)
     {
