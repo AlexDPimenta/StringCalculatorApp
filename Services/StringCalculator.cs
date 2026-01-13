@@ -20,7 +20,7 @@ public class StringCalculator : ICalculator
             return 0;
         }
 
-        var splitNumbers = numbers.Split(',');
+        var splitNumbers = numbers.Split(',', '\n');
 
         return splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
