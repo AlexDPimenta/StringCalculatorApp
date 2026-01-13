@@ -20,10 +20,17 @@ public class StringCalculator : ICalculator
             return 0;
         }
 
-        var splitNumbers = numbers.Split(',');
-
-        return splitNumbers
+        var splitNumbers = numbers.Split(',', '\n');
+        var parsedNumbers = splitNumbers
             .Select(s => int.TryParse(s.Trim(), out var n) ? n : 0)
-            .Sum();
+            .ToList();
+
+        var negatives = parsedNumbers.Where(n => n < 0).ToList();
+        if (negatives.Any())
+        {
+            throw new ArgumentException($"Negatives not allowed: {string.Join(", ", negatives)}");
+        }
+
+        return parsedNumbers.Sum();
     }
 }
